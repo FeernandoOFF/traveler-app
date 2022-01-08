@@ -13,7 +13,7 @@ export default function Explore() {
 }
 
 function Map() {
-  const coordenades = { lat: 0, lng: 0 };
+  const coordenades = { lat: 19.4978, lng: -99.1269 };
 
   return (
     <div className="min-w-[100vw] min-h-[100vh] w-[100vw] h-[100vh]">

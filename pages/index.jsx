@@ -1,13 +1,15 @@
 import {
   BellOutlined,
+  FilterOutlined,
   HeartOutlined,
   SearchOutlined,
   UserOutlined,
 } from '@ant-design/icons/lib/icons';
-import { AutoComplete } from 'antd';
+import { AutoComplete, Popover } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useState } from 'react';
 import { Menu } from '../components/Menu';
 
 export default function Home() {
@@ -74,22 +76,63 @@ export const SearchComponent = () => {
   );
 };
 export const CategoriesComponent = () => {
+  const [categories, setCategories] = useState('hotels');
   return (
     <div className="mt-4">
       <h5 className="subtitle">Categories</h5>
       <div className="categories_list flex justify-start flex-nowrap overflow-x-scroll">
-        {CategoryIcon()}
-        {CategoryIcon()}
-        {CategoryIcon()}
+        <CategoryIcon
+          value={'hotels'}
+          setCategories={setCategories}
+          categories={categories}
+        />
+        <CategoryIcon
+          value={'restaurants'}
+          setCategories={setCategories}
+          categories={categories}
+        />
+        <CategoryIcon
+          value={'attractions'}
+          setCategories={setCategories}
+          categories={categories}
+        />
       </div>
     </div>
   );
 };
 export const ResultsComponent = () => {
+  const [stars, setStars] = useState(0);
+  const StarsMenu = (
+    <div>
+      <StarRating
+        className={`my-2 text-gray-700 font-semibold ${
+          stars == 0 && 'text-blue-400'
+        }`}
+        setStars={setStars}
+        stars={stars}
+        value={0}
+      >
+        All
+      </StarRating>
+      <StarRating setStars={setStars} stars={stars} value={3} />
+      <StarRating setStars={setStars} stars={stars} value={4} />
+      <StarRating setStars={setStars} stars={stars} value={4.5} />
+    </div>
+  );
   return (
     <div className="mt-[5vh]">
-      <div>
+      <div className="flex justify-between px-2 items-center">
         <h5 className="subtitle">Top trips</h5>
+        <div className="mr-4">
+          <Popover
+            content={StarsMenu}
+            title="Rating"
+            placement="left"
+            trigger={'click'}
+          >
+            <FilterOutlined className="text-lg " />
+          </Popover>
+        </div>
       </div>
       <div className="topTrip_container flex flex-wrap w-full justify-between ">
         {ResultItem()}
@@ -103,11 +146,18 @@ export const ResultsComponent = () => {
 
 //* SINGLE COMPONENTS ----
 
-function CategoryIcon() {
+function CategoryIcon({ value, setCategories, categories }) {
   return (
-    <div className="categories_item lg:min-w-[200px] min-w-[130px] min-h-[40px] p-3 rounded-xl bg-white flex items-center mx-4">
-      <div className="image h-[35px] w-[35px] bg-gray-300 rounded-lg "></div>
-      <p className="font-medium lg:ml-4 lg:text-base ml-2">Hotels</p>
+    <div
+      onClick={() => setCategories(value)}
+      className={`
+    categories_item lg:min-w-[200px] min-w-[150px] min-h-[40px] p-3 rounded-xl bg-white flex items-center mx-4 my-4
+    ${categories == value && 'bg-gray-300 shadow-lg'}`}
+    >
+      <div className="image h-[35px] w-[35px] bg-gray-200 rounded-lg "></div>
+      <p className="font-medium lg:ml-4 lg:text-base ml-2 capitalize">
+        {value}
+      </p>
     </div>
   );
 }
@@ -138,5 +188,19 @@ function ResultItem() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function StarRating({ setStars, stars, value, children }) {
+  return (
+    <p
+      className={`my-2 text-gray-700 font-semibold ${
+        stars == value && 'text-blue-400'
+      }`}
+      onClick={({ target }) => setStars(target.dataset.value)}
+      data-value={value}
+    >
+      {children ? children : ` Above ${value} stars`}
+    </p>
   );
 }
