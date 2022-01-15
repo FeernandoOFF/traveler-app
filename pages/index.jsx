@@ -7,14 +7,17 @@ import {
 } from '@ant-design/icons/lib/icons';
 import { AutoComplete, Popover } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
+import { motion } from 'framer-motion';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useEffect } from 'react/cjs/react.development';
 import { Menu } from '../components/Menu';
+import { getPlacesData } from '../utils/api';
 
 export default function Home() {
   return (
-    <div className="bg-gray-100">
+    <div>
       <Head>
         <title>Traveler App | FeernandoOFF</title>
         <meta
@@ -29,7 +32,6 @@ export default function Home() {
         <SearchComponent />
         <CategoriesComponent />
         <ResultsComponent />
-        <Menu />
       </main>
     </div>
   );
