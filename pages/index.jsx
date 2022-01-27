@@ -9,7 +9,6 @@ import { AutoComplete, Popover } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useState } from 'react';
 import { useEffect } from 'react/cjs/react.development';
 import { Menu } from '../components/Menu';
@@ -206,7 +205,8 @@ function ResultItem() {
         <img
           className="max-w-[100%] rounded-md"
           src="https://images.unsplash.com/photo-1557456170-0cf4f4d0d362?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
-        ></img>
+          alt="Background"
+        />
       </div>
       <div className="topTrip_info py-3">
         <div className="left relative mt-3">
