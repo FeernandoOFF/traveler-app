@@ -4,7 +4,6 @@ import { API } from '../pages/explore';
 const URL = 'https://travel-advisor.p.rapidapi.com/hotels/list-in-boundary';
 
 export const getPlacesData = async (sw, ne) => {
-  console.log('getPlacesData', sw, ne);
   const options = {
     params: {
       // bl_latitude: sw.lat,
@@ -22,10 +21,22 @@ export const getPlacesData = async (sw, ne) => {
       'x-rapidapi-key': 'f20596972dmsh5b99a42f12b7552p15cbdfjsn8d56df9f2def',
     },
   };
+  // console.log(options);
 
   try {
-    const data = await axios(URL, options);
-    return data.data.data;
+    const c = {
+      method: 'get',
+      url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522%2C151.1957362&radius=1500&type=restaurant&keyword=cruise&key=${API}`,
+      headers: {},
+    };
+    const data = await axios(c);
+    console.log(data);
+    return [];
+    //   const {
+    //     data: { data },
+    //   } = await axios(URL, options);
+    //   console.log(data);
+    //   return data;
   } catch (error) {
     console.log(error);
   }

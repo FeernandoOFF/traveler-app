@@ -18,6 +18,7 @@ function MyApp({ Component, pageProps, router }) {
           opacity: 1,
         },
       }}
+      transition={{ duration: 0.4 }}
     >
       <Component {...pageProps} />
       <Menu />

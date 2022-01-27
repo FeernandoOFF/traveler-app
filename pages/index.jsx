@@ -17,7 +17,7 @@ import { getPlacesData } from '../utils/api';
 
 export default function Home() {
   return (
-    <div>
+    <div className="bg-gray-100">
       <Head>
         <title>Traveler App | FeernandoOFF</title>
         <meta
@@ -44,7 +44,7 @@ export const Header = () => {
       <nav className="flex justify-between  mx-auto items-center">
         <div className="left flex justify-between items-center">
           <Avatar
-            className="flex items-center justify-center shadow-md"
+            className="flex items-center justify-center shadow-md cursor-pointer"
             style={{ backgroundColor: '#ff8348' }}
             icon={<UserOutlined />}
           />
@@ -52,9 +52,16 @@ export const Header = () => {
           <p className="ml-4 font-semibold">Hi, Jennifer!</p>
         </div>
         <div className="right">
-          <div className="p-3  flex items-center rounded-full bg-white text-red-400 shadow-md shadow-red-100">
+          <motion.div
+            whileTap={{
+              scale: 1.14,
+              backgroundColor: '#F12222',
+              color: '#fff',
+            }}
+            className="p-3  flex items-center rounded-full bg-white text-red-400 shadow-md shadow-red-100 cursor-pointer"
+          >
             <BellOutlined />
-          </div>
+          </motion.div>
         </div>
       </nav>
     </header>
@@ -67,13 +74,25 @@ export const SearchComponent = () => {
         Where do
         <br /> you want to go?
       </h5>
-      <AutoComplete className="my-[5vh] w-full  mx-auto " options={[]}>
+      <motion.div
+        className="relative my-[5vh] "
+        whileFocus={{ backgroundColor: 'red' }}
+      >
         <input
           type="text"
-          className="px-3 py-4 rounded-xl shadow-sm border-none outline-none bg-white text-gray-800 w-full relative"
+          className="    mx-auto px-3 py-4 rounded-xl shadow-sm border-none outline-none bg-white text-gray-800 w-full "
           placeholder="Search for places"
         />
-      </AutoComplete>
+        <motion.div
+          whileHover={{
+            transform: 'rotateY(360deg)',
+            transition: { duration: 0.6 },
+          }}
+          className="absolute right-3 top-2 flex justify-center items-center p-3 rounded-full bg-white shadow-sm shadow-yellow-500 text-yellow-600 font-semibold"
+        >
+          <SearchOutlined className="" />
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
@@ -150,8 +169,10 @@ export const ResultsComponent = () => {
 
 function CategoryIcon({ value, setCategories, categories }) {
   return (
-    <div
+    <motion.div
       onClick={() => setCategories(value)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className={`
     categories_item lg:min-w-[200px] min-w-[150px] min-h-[40px] p-3 rounded-xl bg-white flex items-center mx-4 my-4
     ${categories == value && 'bg-gray-300 shadow-lg'}`}
@@ -160,13 +181,18 @@ function CategoryIcon({ value, setCategories, categories }) {
       <p className="font-medium lg:ml-4 lg:text-base ml-2 capitalize">
         {value}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 function ResultItem() {
   return (
-    <div className="topTrip_item bg-gray-50 rounded-lg p-2 w-[48%] lg:min-w-[300px] lg:max-w-[200px] my-8 shadow-md">
+    <motion.div
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      whileInView={{ opacity: 1 }}
+      className="topTrip_item bg-gray-50 rounded-lg p-2 w-[48%] lg:min-w-[300px] lg:max-w-[200px] my-8 shadow-md"
+    >
       <div className="topTrip_image min-w-full min-h-[140px] bg-gray-400 rounded-md relative shadow-lg">
         <p
           className="right-2 top-2 p-1  inline-block rounded-md bg-white text-xs absolute  bg-clip-padding text-gray-500 opacity-80"
@@ -189,7 +215,7 @@ function ResultItem() {
           <HeartOutlined className="absolute bottom-0 right-0 p-2 bg-white rounded-full text-xs text-red-400 shadow-md shadow-red-100" />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
