@@ -79,7 +79,7 @@ export const SearchComponent = () => {
       >
         <input
           type="text"
-          className="    mx-auto px-3 py-4 rounded-xl shadow-sm border-none outline-none bg-white text-gray-800 w-full "
+          className="    mx-auto px-3 py-5 rounded-xl shadow-sm border-none outline-none bg-white text-gray-700 w-full font-semibold "
           placeholder="Search for places"
         />
         <motion.div
@@ -142,7 +142,7 @@ export const ResultsComponent = () => {
   return (
     <div className="mt-[5vh]">
       <div className="flex justify-between px-2 items-center">
-        <h5 className="subtitle">Top trips</h5>
+        <h5 className="subtitle">Locatios close to You</h5>
         <div className="mr-4">
           <Popover
             content={StarsMenu}
@@ -188,7 +188,7 @@ function ResultItem() {
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      transition={{ duration: 0.6, delay: 0.3 }}
+      transition={{ duration: 0.4, delay: 0.3 }}
       whileInView={{ opacity: 1 }}
       className="topTrip_item bg-gray-50 rounded-lg p-2 w-[48%] lg:min-w-[300px] lg:max-w-[200px] my-8 shadow-md"
     >

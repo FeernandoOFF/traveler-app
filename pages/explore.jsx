@@ -6,65 +6,45 @@ import { Menu } from '../components/Menu';
 import { getPlacesData } from '../utils/api';
 
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 
 export default function Explore() {
-  const MapWithNoSSR = dynamic(() => import('../components/MapExplore'), {
+  const MapWithNoSSR = dynamic(() => import('../components/MapExplore.jsx'), {
     ssr: false,
   });
-  // const [coordenades, setCoordenades] = useState({
-  //   // lng: 0,
-  //   // lat: 0,
-  // });
-  // const [bounds, setBounds] = useState(null);
-  // const [places, setPlaces] = useState([]);
+  const [coordenades, setCoordenades] = useState([]);
+  const [filter, setFilter] = useState('catering.restaurant');
 
-  // useEffect(() => {
-  //   if (!bounds || !bounds.sw) return;
-  //   getPlacesData(bounds.sw, bounds.ne).then((places) => {
-  //     setPlaces(places);
-  //     console.log('PLACES REQUES', places);
-  //   });
-  // }, [coordenades, bounds]);
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude, longitude } }) => {
+        setCoordenades([latitude, longitude]);
+        console.log('USER LOCATION', latitude, longitude);
+      },
+      (e) => console.log(e)
+    );
+  }, []);
 
-  // useEffect(() => {
-  //   navigator.geolocation.getCurrentPosition(
-  //     ({ coords: { latitude, longitude } }) => {
-  //       setCoordenades({ lat: latitude, lng: longitude });
-  //       console.log('USER LOCATION', latitude, longitude);
-  //     },
-  //     (e) => console.log(e)
-  //   );
-  // }, []);
-  const position = [51.505, -0.09];
+  if (!coordenades[0]) return <div>Loading...</div>;
 
   return (
     <div>
-      <MapWithNoSSR />
+      <Head>
+        <title>Explore Places | Traveler App</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className="fixed top-0 p-4 left-0 z-50 w-screen bg-gray-50">
+        <ul className="flex w-full justify-between items-center">
+          <li
+            onClick={() => setFilter('accommodation.hotel')}
+            className="p-3 bg-gray-300 rounded-md"
+          >
+            Hotel
+          </li>
+          <li>Parking</li>
+        </ul>
+      </div>
+      <MapWithNoSSR center={coordenades} filter={filter} />
     </div>
   );
 }
-
-// function Map2({ setBounds, setCoordenades, coordenades }) {
-//   // const coordenades = { lat: 19.4978, lng: -99.1269 };
-
-//   if (!coordenades.lat) return null;
-//   return (
-//     <div className="min-w-[100vw] min-h-[100vh] w-[100vw] h-[100vh]">
-//       <GoogleMapReact
-//         bootstrapURLKeys={{ key: API }}
-//         center={coordenades}
-//         defaultZoom={14}
-//         margin={[50, 50, 50, 50]}
-//         defaultCenter={coordenades}
-//         options={{}}
-//         onChange={(e) => {
-//           setCoordenades({ lat: e.center.lat, lng: e.center.lng });
-//           setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
-//         }}
-//         onChildClick={() => {}}
-//       ></GoogleMapReact>
-//     </div>
-//   );
-// }
-
-export const API = 'AIzaSyDqP5bHVCYXLH0zuVsbNQpS0ZWVNbW-hRs';

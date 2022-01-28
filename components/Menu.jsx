@@ -10,7 +10,7 @@ import React from 'react';
 export const Menu = () => {
   return (
     <nav
-      className="fixed bottom-4 w-[70vw] py-4 px-8 rounded-2xl bg-gray-900 flex justify-between mx-auto max-w-[400px] text-lg text-gray-400"
+      className="fixed bottom-4 w-[70vw] py-4 px-8 rounded-2xl bg-gray-900 flex justify-between mx-auto max-w-[400px] text-lg text-gray-400 z-50"
       style={{ transform: 'translateX(-50%)', left: '50%', right: '50%' }}
     >
       <LinkActive href={'/'}>
