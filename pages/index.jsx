@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import {
   BellOutlined,
   FilterOutlined,
@@ -5,16 +6,37 @@ import {
   SearchOutlined,
   UserOutlined,
 } from '@ant-design/icons/lib/icons';
-import { AutoComplete, Popover } from 'antd';
+import { AutoComplete, Popover, Result, Slider } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
 import { useState } from 'react';
 import { useEffect } from 'react/cjs/react.development';
-import { Menu } from '../components/Menu';
-import { getPlacesData } from '../utils/api';
+import {
+  getAutoComplete,
+  getPlacesByRadius,
+  getPlacesData,
+} from '../utils/api';
+import { useAppContext } from '../utils/appContext';
+import { useFavorites } from '../utils/favoritePlaces';
 
 export default function Home() {
+  const [categories, setCategories] = useState('tourism.attraction');
+  const { coordenades, locationError } = useAppContext();
+  const [places, setPlaces] = useState([]);
+  const [km, setKM] = useState(1);
+
+  useEffect(async () => {
+    if (!coordenades[0]) return;
+    const places = await getPlacesByRadius({
+      lat: coordenades[0],
+      lng: coordenades[1],
+      radius: km * 1000,
+      filter: categories,
+    });
+    setPlaces(places);
+  }, [coordenades, categories, km]);
+
   return (
     <div className="bg-gray-100">
       <Head>
@@ -29,8 +51,21 @@ export default function Home() {
       <main className=" min-h-[100vh]  w-11/12 mx-auto">
         <Header />
         <SearchComponent />
-        <CategoriesComponent />
-        <ResultsComponent />
+        <h5 className="subtitle">Categories</h5>
+        <CategoriesComponent
+          categories={categories}
+          setCategories={setCategories}
+        />
+        {locationError ? (
+          <div className="min-w-screen  min-h-screen flex justify-center items-center  ">
+            <Result
+              status={'warning'}
+              title="Please grant the location permission"
+            />
+          </div>
+        ) : (
+          <ResultsComponent places={places} km={km} setKM={setKM} />
+        )}
       </main>
     </div>
   );
@@ -67,6 +102,16 @@ export const Header = () => {
   );
 };
 export const SearchComponent = () => {
+  const router = useRouter();
+
+  const [autocomplete, setAutocomplete] = useState([]);
+
+  async function handleSearch(value) {
+    if (!value | (value?.length < 3)) return;
+
+    const res = await getAutoComplete(value);
+    setAutocomplete(res);
+  }
   return (
     <div className="mt-[3vh]">
       <h5 className="font-bold text-3xl">
@@ -77,10 +122,21 @@ export const SearchComponent = () => {
         className="relative my-[5vh] "
         whileFocus={{ backgroundColor: 'red' }}
       >
-        <input
-          type="text"
-          className="    mx-auto px-3 py-5 rounded-xl shadow-sm border-none outline-none bg-white text-gray-700 w-full font-semibold "
-          placeholder="Search for places"
+        <AutoComplete
+          options={autocomplete?.map((place) => ({
+            value: place?.formatted,
+            option: { lat: place?.lat, lng: place.lon },
+          }))}
+          onSelect={(e, { option }) => {
+            // console.log('select', {});
+            router.push({
+              pathname: '/explore',
+              query: { lat: option.lat, lng: option.lng },
+            });
+          }}
+          placeholder="Search a place"
+          className=" mx-auto px-2 py-4 rounded-xl shadow-sm border-none outline-none bg-white text-gray-700 w-full font-semibold "
+          onChange={(e) => handleSearch(e)}
         />
         <motion.div
           whileHover={{
@@ -95,50 +151,52 @@ export const SearchComponent = () => {
     </div>
   );
 };
-export const CategoriesComponent = () => {
-  const [categories, setCategories] = useState('hotels');
+export const CategoriesComponent = ({
+  categories,
+  setCategories,
+  className = '',
+}) => {
   return (
-    <div className="mt-4">
-      <h5 className="subtitle">Categories</h5>
-      <div className="categories_list flex justify-start flex-nowrap overflow-x-scroll">
-        <CategoryIcon
-          value={'hotels'}
-          setCategories={setCategories}
-          categories={categories}
-        />
-        <CategoryIcon
-          value={'restaurants'}
-          setCategories={setCategories}
-          categories={categories}
-        />
-        <CategoryIcon
-          value={'attractions'}
-          setCategories={setCategories}
-          categories={categories}
-        />
-      </div>
+    <div
+      className={`categories_list flex justify-start flex-nowrap overflow-x-scroll ${className}`}
+    >
+      <CategoryIcon
+        value={'tourism.attraction'}
+        name={'attractions'}
+        setCategories={setCategories}
+        categories={categories}
+      />
+      <CategoryIcon
+        value={'accommodation.hotel'}
+        name={'hotels'}
+        setCategories={setCategories}
+        categories={categories}
+      />
+      <CategoryIcon
+        value={'catering.restaurant'}
+        name={'restaurants'}
+        setCategories={setCategories}
+        categories={categories}
+      />
     </div>
   );
 };
-export const ResultsComponent = () => {
-  const [stars, setStars] = useState(0);
+export const ResultsComponent = ({ places, setKM }) => {
+  const { favorites, handleFavorite } = useFavorites();
+
+  //* _ MENU
   const StarsMenu = (
     <div>
-      <StarRating
-        className={`my-2 text-gray-700 font-semibold ${
-          stars == 0 && 'text-blue-400'
-        }`}
-        setStars={setStars}
-        stars={stars}
-        value={0}
-      >
-        All
-      </StarRating>
-      <StarRating setStars={setStars} stars={stars} value={3} />
-      <StarRating setStars={setStars} stars={stars} value={4} />
-      <StarRating setStars={setStars} stars={stars} value={4.5} />
+      <h2>Search by KM</h2>
+      <Slider
+        defaultValue={1}
+        max={5}
+        step={1}
+        onChange={(value) => setKM(value)}
+      />
     </div>
   );
+  //* _PLACES_
   return (
     <div className="mt-[5vh]">
       <div className="flex justify-between px-2 items-center">
@@ -155,10 +213,17 @@ export const ResultsComponent = () => {
         </div>
       </div>
       <div className="topTrip_container flex flex-wrap w-full justify-between ">
-        {ResultItem()}
-        {ResultItem()}
-        {ResultItem()}
-        {ResultItem()}
+        {places?.map(({ properties }, i) => (
+          <ResultItem
+            name={properties.name}
+            distance={properties.distance}
+            setFavorites={() => handleFavorite(properties)}
+            isFavorite={favorites?.find(
+              (item) => item.place_id === properties.place_id
+            )}
+            key={i}
+          />
+        ))}
       </div>
     </div>
   );
@@ -166,7 +231,7 @@ export const ResultsComponent = () => {
 
 //* SINGLE COMPONENTS ----
 
-function CategoryIcon({ value, setCategories, categories }) {
+function CategoryIcon({ value, setCategories, categories, name }) {
   return (
     <motion.div
       onClick={() => setCategories(value)}
@@ -177,14 +242,12 @@ function CategoryIcon({ value, setCategories, categories }) {
     ${categories == value && 'bg-gray-300 shadow-lg'}`}
     >
       <div className="image h-[35px] w-[35px] bg-gray-200 rounded-lg "></div>
-      <p className="font-medium lg:ml-4 lg:text-base ml-2 capitalize">
-        {value}
-      </p>
+      <p className="font-medium lg:ml-4 lg:text-base ml-2 capitalize">{name}</p>
     </motion.div>
   );
 }
 
-function ResultItem() {
+function ResultItem({ name, distance, setFavorites, isFavorite }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -210,9 +273,16 @@ function ResultItem() {
       </div>
       <div className="topTrip_info py-3">
         <div className="left relative mt-3">
-          <h6 className="font-semibold text-sm ">Banijr Kanal </h6>
-          <span className="text-gray-400 font-normal text-xs">Camp</span>
-          <HeartOutlined className="absolute bottom-0 right-0 p-2 bg-white rounded-full text-xs text-red-400 shadow-md shadow-red-100" />
+          <h6 className="font-semibold text-sm pr-1 ">{name}</h6>
+          <span className="text-gray-400 font-normal text-xs">
+            {distance} m
+          </span>
+          <HeartOutlined
+            onClick={setFavorites}
+            className={`${
+              !isFavorite ? 'bg-white text-red-400 ' : 'bg-red-400 text-white'
+            } absolute bottom-0 right-0 w-[30px] h-[30px] flex items-center justify-center  rounded-full text-xs shadow-md shadow-red-100`}
+          />
         </div>
       </div>
     </motion.div>

@@ -4,20 +4,22 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
 import { getPlacesData } from '../utils/api';
+import { HeartOutlined } from '@ant-design/icons';
+import { useFavorites } from '../utils/favoritePlaces';
 
 export default function MapExplore({ center, filter }) {
+  const { favorites, handleFavorite } = useFavorites();
+
   const [map, setMap] = useState(null);
   const [bounds, setBounds] = useState(null);
   const [places, setPlaces] = useState([]);
 
-  console.log(center);
   const onMove = useCallback(() => {
     setBounds(map.getBounds());
     const { _northEast, _southWest } = map.getBounds();
 
     getPlacesData(_northEast, _southWest, filter).then((places) => {
       setPlaces(places);
-      console.log('PLACES REQUES', places);
     });
   }, [map]);
 
@@ -27,7 +29,6 @@ export default function MapExplore({ center, filter }) {
     const { _northEast, _southWest } = map.getBounds();
     getPlacesData(_northEast, _southWest, filter).then((places) => {
       setPlaces(places);
-      console.log('PLACES REQUES', places);
     });
     return () => {
       map.off('move', onMove);
@@ -48,6 +49,9 @@ export default function MapExplore({ center, filter }) {
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${process.env.NEXT_PUBLIC_MAPBOX}`}
         />
         {places?.map((place) => {
+          const isFavorite = favorites?.find(
+            (item) => item.place_id === place.properties.place_id
+          );
           return (
             <Marker
               position={[
@@ -56,7 +60,19 @@ export default function MapExplore({ center, filter }) {
               ]}
               key={place.properties.place_id}
             >
-              <Popup>{place.properties.name}</Popup>
+              <Popup>
+                <div>
+                  <p>{place.properties.name}</p>
+                  <HeartOutlined
+                    onClick={() => handleFavorite(place.properties)}
+                    className={`${
+                      !isFavorite
+                        ? 'bg-white text-red-400 '
+                        : 'bg-red-400 text-white'
+                    } absolute bottom-0 right-0 w-[30px] h-[30px] flex items-center justify-center  rounded-full text-xs shadow-md shadow-red-100`}
+                  />
+                </div>
+              </Popup>
             </Marker>
           );
         })}
