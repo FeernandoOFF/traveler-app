@@ -12,7 +12,6 @@ export default function Favorites() {
       <Head>
         <title>Favorites | Traveler App</title>
         <meta name="description" content="Your list of favorite places" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <h5 className="font-bold text-3xl text-center pt-[10vh] mb-[5vh]">

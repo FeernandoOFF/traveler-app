@@ -45,7 +45,6 @@ export default function Home() {
           name="description"
           content="If your gonna travel around the world or your city you absoloutley neet this Traveler's app to know where your going"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className=" min-h-[100vh]  w-11/12 mx-auto">

@@ -11,8 +11,8 @@ import { useAppContext } from '../utils/appContext.js';
 
 export default function Explore() {
   const { query } = useRouter();
-
   const { coordenades, locationError, setCoordenades } = useAppContext();
+
   let [categories, setCategories] = useState('tourism.attraction');
   const { lat, lng } = query;
 
@@ -46,7 +46,6 @@ export default function Explore() {
     <div className="bg-gray-100">
       <Head>
         <title>Explore Places | Traveler App</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <CategoriesComponent
