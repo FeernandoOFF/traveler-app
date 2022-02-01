@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+env:
+  NEXT_PUBLIC_MAPBOX: pk.eyJ1IjoiZmVlcm5hbmRvb2ZmIiwiYSI6ImNreXhnZHZucTBna20yenRibjYzNXB5amUifQ.wAErxzVmzKE75rk2PAYb3Q
+  NEXT_PUBLIC_GEOAPIFY: 1506fe4b3b2f47c5ba8f45810567c986
+
 jobs:
   build:
     runs-on: ubuntu-latest
