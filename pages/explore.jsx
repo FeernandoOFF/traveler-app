@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { useEffect } from 'react/cjs/react.development';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { CategoriesComponent } from './index.jsx';

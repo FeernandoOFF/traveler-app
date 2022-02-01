@@ -10,8 +10,7 @@ import { AutoComplete, Popover, Result, Slider } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import { motion } from 'framer-motion';
 import Head from 'next/head';
-import { useState } from 'react';
-import { useEffect } from 'react/cjs/react.development';
+import { useState, useEffect } from 'react';
 import {
   getAutoComplete,
   getPlacesByRadius,
@@ -26,15 +25,18 @@ export default function Home() {
   const [places, setPlaces] = useState([]);
   const [km, setKM] = useState(1);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (!coordenades[0]) return;
-    const places = await getPlacesByRadius({
-      lat: coordenades[0],
-      lng: coordenades[1],
-      radius: km * 1000,
-      filter: categories,
-    });
-    setPlaces(places);
+    async function init() {
+      const places = await getPlacesByRadius({
+        lat: coordenades[0],
+        lng: coordenades[1],
+        radius: km * 1000,
+        filter: categories,
+      });
+      setPlaces(places);
+    }
+    init();
   }, [coordenades, categories, km]);
 
   return (
