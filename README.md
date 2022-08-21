@@ -1,4 +1,5 @@
 # Traveler advisor
+You can see the project live on [this page](https://travel.feernandooff.com/)
 
 ## Tech Stack:
 
@@ -16,4 +17,4 @@ Also i wanna try work with maps
 
 The reaso why i choose the Lifeat maps it's because the Travel Advisor by RapidAPI deprecated the fetch by boundary
 
-## Thanks to @Risang Kuncoro for the App concept the link of the (dribble design)[https://dribbble.com/shots/15079032-Travel-App-Concept] 
+## Thanks to @Risang Kuncoro for the App concept the link of the [dribble design](https://dribbble.com/shots/15079032-Travel-App-Concept)
